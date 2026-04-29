@@ -8,10 +8,10 @@ export default function Upload() {
   const loadImages = () => {
     fetch("/images")
       .then((res) => res.json())
-      .then((data) => setImages(data));
+      .then((data) => setImages(data))
+      .catch(() => setMessage("Erro ao carregar imagens"));
   };
 
-  // Carregar imagens existentes
   useEffect(() => {
     loadImages();
   }, []);
@@ -34,16 +34,17 @@ export default function Upload() {
 
     const data = await res.json();
 
-    if (data.message) {
+    if (res.ok) {
       setMessage("Upload realizado com sucesso!");
-      loadImages(); // 🔥 atualiza lista
+      loadImages();
+      e.target.value = "";
     } else {
-      setMessage("Erro ao enviar imagens");
+      setMessage(data.error || "Erro ao enviar imagens");
     }
   };
 
   const handleDelete = async (filename) => {
-    const res = await fetch(`/${filename}`, {
+    const res = await fetch(`/images/${filename}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -51,10 +52,9 @@ export default function Upload() {
     });
 
     if (res.ok) {
-      // 🔥 remove localmente (instantâneo)
       setImages((prev) => prev.filter((img) => !img.includes(filename)));
     } else {
-      console.error("Erro ao deletar imagem");
+      setMessage("Erro ao deletar imagem");
     }
   };
 
@@ -72,6 +72,7 @@ export default function Upload() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        p: 3,
       }}
     >
       <Typography variant="h4" sx={{ color: "#FFD700", mb: 3 }}>
@@ -81,12 +82,9 @@ export default function Upload() {
       <input type="file" multiple accept="image/*" onChange={handleUpload} />
 
       {message && (
-        <Typography sx={{ color: "#FFD700", mt: 2 }}>
-          {message}
-        </Typography>
+        <Typography sx={{ color: "#FFD700", mt: 2 }}>{message}</Typography>
       )}
 
-      {/* Lista de imagens */}
       <Box sx={{ mt: 4, display: "flex", flexWrap: "wrap", gap: 2 }}>
         {images.map((src) => {
           const filename = src.split("/").pop();
@@ -101,10 +99,12 @@ export default function Upload() {
               }}
             >
               <img
-                src={`/${src}`}
+                src={src}
                 alt={filename}
                 style={{
                   width: "150px",
+                  height: "120px",
+                  objectFit: "cover",
                   border: "2px solid #FFD700",
                   borderRadius: "5px",
                 }}
@@ -131,27 +131,12 @@ export default function Upload() {
         })}
       </Box>
 
-      {/* Botões */}
       <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
-        <Button
-          href="/"
-          sx={{
-            bgcolor: "#FFD700",
-            color: "#000",
-            fontWeight: "bold",
-          }}
-        >
+        <Button href="/" sx={{ bgcolor: "#FFD700", color: "#000", fontWeight: "bold" }}>
           Voltar para Home
         </Button>
 
-        <Button
-          onClick={handleLogout}
-          sx={{
-            bgcolor: "#FFD700",
-            color: "#000",
-            fontWeight: "bold",
-          }}
-        >
+        <Button onClick={handleLogout} sx={{ bgcolor: "#FFD700", color: "#000", fontWeight: "bold" }}>
           Logout
         </Button>
       </Box>

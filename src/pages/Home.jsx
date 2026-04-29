@@ -71,7 +71,7 @@ useEffect(() => {
   {images.map((src, index) => (
     <SwiperSlide key={index}>
       <img
-        src={`/${src}`}
+       src={src}
         alt={`Imagem ${index + 1}`}
         style={{
           width: "100%",
