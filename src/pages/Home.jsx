@@ -22,38 +22,46 @@ export default function Home() {
     <Box
       sx={{
         backgroundColor: "#000",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         display: "flex",
         flexDirection: "column",
+        overflowX: "hidden",
       }}
     >
       <AppBar
         position="static"
         elevation={0}
         sx={{
-          bgcolor: "rgba(0,0,0,0.94)",
+          bgcolor: "rgba(0,0,0,0.96)",
           borderBottom: "1px solid rgba(255, 215, 0, 0.35)",
         }}
       >
         <Toolbar
           sx={{
             justifyContent: "space-between",
-            px: { xs: 2, md: 4 },
-            minHeight: "72px",
+            gap: 1.5,
+            px: { xs: 1.5, sm: 2, md: 4 },
+            minHeight: { xs: "62px", md: "76px" },
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: { xs: 1, md: 1.5 },
+            }}
+          >
             <Box
               component="img"
               src="/img/logo.png"
               alt="Instituto Fiorotto"
               sx={{
-                height: 56,
-                width: 56,
+                height: { xs: 42, md: 56 },
+                width: { xs: 42, md: 56 },
                 borderRadius: "12px",
                 background: "#fff",
                 p: "4px",
-                boxShadow: "0 0 20px rgba(255, 215, 0, 0.35)",
+                boxShadow: "0 0 16px rgba(255, 215, 0, 0.35)",
               }}
             />
 
@@ -62,9 +70,10 @@ export default function Home() {
                 sx={{
                   color: "#FFD700",
                   fontWeight: 900,
-                  fontSize: { xs: "1.1rem", md: "1.45rem" },
+                  fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.45rem" },
                   fontFamily: "'Playfair Display', serif",
                   lineHeight: 1,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Instituto Fiorotto
@@ -73,10 +82,11 @@ export default function Home() {
               <Typography
                 sx={{
                   color: "rgba(255,255,255,0.75)",
-                  fontSize: "0.72rem",
-                  letterSpacing: "2px",
+                  fontSize: { xs: "0.55rem", md: "0.72rem" },
+                  letterSpacing: { xs: "1px", md: "2px" },
                   textTransform: "uppercase",
-                  mt: 0.6,
+                  mt: 0.5,
+                  whiteSpace: "nowrap",
                 }}
               >
                 Estética Odontológica
@@ -90,9 +100,12 @@ export default function Home() {
               background: "linear-gradient(135deg, #FFD700, #B8860B)",
               color: "#000",
               fontWeight: 900,
-              px: { xs: 2, md: 3 },
-              py: 1.1,
+              px: { xs: 1.4, md: 3 },
+              py: { xs: 0.8, md: 1.1 },
+              fontSize: { xs: "0.7rem", md: "0.875rem" },
               borderRadius: "999px",
+              minWidth: "auto",
+              whiteSpace: "nowrap",
               boxShadow: "0 0 18px rgba(255, 215, 0, 0.35)",
               "&:hover": {
                 background: "#000",
@@ -106,27 +119,39 @@ export default function Home() {
         </Toolbar>
       </AppBar>
 
-      <Box component="main" sx={{ flex: 1 }}>
+      <Box
+        component="main"
+        sx={{
+          flex: "1 0 auto",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Box
           component="img"
           src="/img/base.png"
           alt="Instituto Fiorotto"
           sx={{
             width: "100%",
-            height: { xs: "220px", md: "320px" },
+            height: { xs: "155px", sm: "210px", md: "320px" },
             objectFit: "cover",
             display: "block",
           }}
         />
 
-        <Box sx={{ px: { xs: 2, md: 4 }, py: 4 }}>
+        <Box
+          sx={{
+            px: { xs: 1.5, sm: 2, md: 4 },
+            py: { xs: 2, md: 4 },
+          }}
+        >
           {images.length > 0 && (
             <Swiper
               modules={[Autoplay]}
               autoplay={{ delay: 2500, disableOnInteraction: false }}
               loop={images.length > 3}
               slidesPerView={1}
-              spaceBetween={20}
+              spaceBetween={16}
               breakpoints={{
                 768: { slidesPerView: 2 },
                 1024: { slidesPerView: 3 },
@@ -140,10 +165,11 @@ export default function Home() {
                     alt={`Imagem ${index + 1}`}
                     style={{
                       width: "100%",
-                      height: "40vh",
+                      height: "clamp(150px, 28vh, 280px)",
                       objectFit: "cover",
                       borderRadius: "14px",
                       border: "2px solid #FFD700",
+                      display: "block",
                     }}
                   />
                 </SwiperSlide>
@@ -153,89 +179,120 @@ export default function Home() {
         </Box>
       </Box>
 
-      <footer
-        style={{
+      <Box
+        component="footer"
+        sx={{
           background:
             "linear-gradient(180deg, #050505 0%, #111 60%, #050505 100%)",
           borderTop: "1px solid rgba(255, 215, 0, 0.35)",
-          padding: "32px 20px",
+          px: 2,
+          py: { xs: 2.5, md: 4 },
           textAlign: "center",
           flexShrink: 0,
           boxShadow: "0 -10px 30px rgba(255, 215, 0, 0.08)",
         }}
       >
-        <p
-          style={{
+        <Typography
+          sx={{
             color: "#FFD700",
-            fontWeight: "900",
-            fontSize: "1.1rem",
-            margin: "0 0 8px",
+            fontWeight: 900,
+            fontSize: { xs: "1rem", md: "1.1rem" },
+            mb: 0.8,
             fontFamily: "'Playfair Display', serif",
             letterSpacing: "0.5px",
           }}
         >
           Instituto Fiorotto
-        </p>
+        </Typography>
 
-        <p
-          style={{
+        <Typography
+          sx={{
             color: "#fff",
-            margin: "0 0 18px",
-            fontSize: "0.95rem",
+            mb: 2,
+            fontSize: { xs: "0.82rem", md: "0.95rem" },
           }}
         >
           Excelência em estética odontológica • São Paulo - SP
-        </p>
+        </Typography>
 
-        <div
-          style={{
+        <Box
+          sx={{
             display: "flex",
             justifyContent: "center",
             flexWrap: "wrap",
-            gap: "12px",
+            gap: 1.5,
           }}
         >
-          <a
-            href="https://wa.me/551131320126"
+          <Box
+            component="a"
+            href="https://wa.me/55959645994"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
+            sx={{
               color: "#000",
-              background: "linear-gradient(135deg, #FFD700, #B8860B)",
+              background: "linear-gradient(135deg, #09ff00, #f3f1ed)",
               textDecoration: "none",
               fontWeight: "bold",
-              padding: "10px 18px",
+              px: 2,
+              py: 1,
               borderRadius: "999px",
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: 1,
+              fontSize: { xs: "0.85rem", md: "1rem" },
             }}
           >
-            <WhatsAppIcon />
+            <WhatsAppIcon fontSize="small" />
             WhatsApp
-          </a>
+          </Box>
+          <Box
+            component="a"
+            href="https://wa.me/5511987880320"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              color: "#000",
+              background: "linear-gradient(135deg, #09ff00, #f3f1ed)",
+              textDecoration: "none",
+              fontWeight: "bold",
+              px: 2,
+              py: 1,
+              borderRadius: "999px",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              fontSize: { xs: "0.85rem", md: "1rem" },
+            }}
+          >
+            <WhatsAppIcon fontSize="small" />
+            WhatsApp
+          </Box>
 
-          <a
+          <Box
+            component="a"
             href="https://www.instagram.com/drgabrielfiorotto"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              color: "#FFD700",
-              border: "1px solid #FFD700",
+            sx={{
+              color: "#fff",
+              border: "1px solid #ff00c3",
+              background: "linear-gradient(135deg, #ff00cc, #f3f1ed)",
               textDecoration: "none",
               fontWeight: "bold",
-              padding: "10px 18px",
+              px: 2,
+              py: 1,
               borderRadius: "999px",
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: 1,
+              fontSize: { xs: "0.85rem", md: "1rem" },
             }}
           >
-            <InstagramIcon />
+            <InstagramIcon fontSize="small" />
             Instagram
-          </a>
-        </div>
-      </footer>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 }
