@@ -11,7 +11,7 @@ export default function Home() {
   const [images, setImages] = useState([]);
 
 useEffect(() => {
-  fetch("http://localhost:4000/images")
+  fetch("/images")
     .then((res) => res.json())
     .then((data) => setImages(data))
     .catch((err) => console.error("Erro ao carregar imagens:", err));
@@ -71,7 +71,7 @@ useEffect(() => {
   {images.map((src, index) => (
     <SwiperSlide key={index}>
       <img
-        src={`http://localhost:4000${src}`}
+        src={`/${src}`}
         alt={`Imagem ${index + 1}`}
         style={{
           width: "100%",

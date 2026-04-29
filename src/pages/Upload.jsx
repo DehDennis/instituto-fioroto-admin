@@ -101,7 +101,7 @@ export default function Upload() {
               }}
             >
               <img
-                src={`http://localhost:4000${src}`}
+                src={`/${src}`}
                 alt={filename}
                 style={{
                   width: "150px",
