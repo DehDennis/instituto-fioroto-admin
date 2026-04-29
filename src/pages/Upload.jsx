@@ -6,7 +6,7 @@ export default function Upload() {
   const [images, setImages] = useState([]);
 
   const loadImages = () => {
-    fetch("http://localhost:4000/images")
+    fetch("/images")
       .then((res) => res.json())
       .then((data) => setImages(data));
   };
@@ -24,7 +24,7 @@ export default function Upload() {
       formData.append("images", file);
     }
 
-    const res = await fetch("http://localhost:4000/upload", {
+    const res = await fetch("/upload", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -43,7 +43,7 @@ export default function Upload() {
   };
 
   const handleDelete = async (filename) => {
-    const res = await fetch(`http://localhost:4000/images/${filename}`, {
+    const res = await fetch(`/${filename}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
