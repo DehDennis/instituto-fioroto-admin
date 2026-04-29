@@ -13,7 +13,6 @@ const SECRET = process.env.JWT_SECRET || "chave-super-secreta";
 const UPLOAD_DIR = path.resolve("uploads");
 const DIST_DIR = path.resolve("dist");
 
-// Garante que a pasta uploads exista
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
@@ -21,13 +20,11 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 app.use(cors());
 app.use(express.json());
 
-// Usuários fixos
 const USERS = [
   { username: process.env.ADMIN_USER, password: process.env.ADMIN_PASS },
   { username: process.env.GABRIEL_USER, password: process.env.GABRIEL_PASS },
 ];
 
-// Login
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -44,7 +41,6 @@ app.post("/login", (req, res) => {
   return res.json({ token });
 });
 
-// Middleware de autenticação
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
 
@@ -56,19 +52,18 @@ function authMiddleware(req, res, next) {
 
   try {
     jwt.verify(token, SECRET);
-    next();
+    return next();
   } catch {
     return res.status(403).json({ error: "Token inválido" });
   }
 }
 
-// Configuração do upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
@@ -77,7 +72,6 @@ const upload = multer({
   limits: { files: 10 },
 });
 
-// Upload de imagens
 app.post("/upload", authMiddleware, upload.array("images", 10), (req, res) => {
   const filePaths = req.files.map((file) => `/uploads/${file.filename}`);
 
@@ -87,7 +81,6 @@ app.post("/upload", authMiddleware, upload.array("images", 10), (req, res) => {
   });
 });
 
-// Listar imagens
 app.get("/images", (req, res) => {
   fs.readdir(UPLOAD_DIR, (err, files) => {
     if (err) {
@@ -100,7 +93,6 @@ app.get("/images", (req, res) => {
   });
 });
 
-// Deletar imagem
 app.delete("/images/:filename", authMiddleware, (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(UPLOAD_DIR, filename);
@@ -114,18 +106,14 @@ app.delete("/images/:filename", authMiddleware, (req, res) => {
   return res.json({ message: "Imagem excluída com sucesso" });
 });
 
-// Servir arquivos enviados
 app.use("/uploads", express.static(UPLOAD_DIR));
 
-// Servir React/Vite buildado
 app.use(express.static(DIST_DIR));
 
-// Fallback para rotas do React
-app.get("*", (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(DIST_DIR, "index.html"));
 });
 
-// Iniciar servidor
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
