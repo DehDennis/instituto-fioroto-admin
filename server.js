@@ -21,8 +21,8 @@ app.use(cors());
 app.use(express.json());
 
 const USERS = [
-  { username: process.env.ADMIN_USER, password: process.env.ADMIN_PASS },
-  { username: process.env.GABRIEL_USER, password: process.env.GABRIEL_PASS },
+  { username: "admin", password: "fiorotto290426!" },
+  { username: "drfiorotto", password: "fiorotto290426!" },
 ];
 
 app.post("/login", (req, res) => {
