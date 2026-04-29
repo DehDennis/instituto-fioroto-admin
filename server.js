@@ -13,8 +13,8 @@ const SECRET = process.env.JWT_SECRET || "chave-super-secreta";
 
 // Usuários fixos
 const USERS = [
-  { username: "admin", password: "senha123" },
-  { username: "gabriel", password: "fiorotto2026" },
+  { username: process.env.ADMIN_USER, password: process.env.ADMIN_PASS },
+  { username: process.env.GABRIEL_USER, password: process.env.GABRIEL_PASS },
 ];
 
 // Login
