@@ -14,39 +14,46 @@ export default function Home() {
       .catch((err) => console.error("Erro ao carregar imagens:", err));
   }, []);
 
-  useEffect(() => {
-    if (images.length === 0) return;
+const GRID_SIZE = 12;
 
-    const initialGrid = Array.from(
-      { length: 9 },
-      (_, index) => images[index % images.length]
-    );
+useEffect(() => {
+  if (images.length === 0) return;
 
-    setGridImages(initialGrid);
-  }, [images]);
+  const initialGrid = Array.from({ length: GRID_SIZE }, (_, index) => {
+    return images[index % images.length];
+  });
 
-  useEffect(() => {
-    if (images.length === 0) return;
+  setGridImages(initialGrid);
+}, [images]);
 
-    const timers = Array.from({ length: 9 }, (_, gridIndex) =>
-      setInterval(() => {
-        setGridImages((prev) => {
-          if (prev.length === 0) return prev;
+useEffect(() => {
+  if (images.length <= GRID_SIZE) return;
 
-          const updated = [...prev];
-          const currentIndex = images.indexOf(updated[gridIndex]);
-          const safeIndex = currentIndex >= 0 ? currentIndex : 0;
-          const nextIndex = (safeIndex + gridIndex + 1) % images.length;
+  const timers = Array.from({ length: GRID_SIZE }, (_, gridIndex) =>
+    setInterval(() => {
+      setGridImages((prev) => {
+        if (prev.length === 0) return prev;
 
-          updated[gridIndex] = images[nextIndex];
+        const updated = [...prev];
+        const usedImages = new Set(updated);
+        let nextImage = updated[gridIndex];
 
-          return updated;
-        });
-      }, 2500 + gridIndex * 450)
-    );
+        for (const img of images) {
+          if (!usedImages.has(img)) {
+            nextImage = img;
+            break;
+          }
+        }
 
-    return () => timers.forEach(clearInterval);
-  }, [images]);
+        updated[gridIndex] = nextImage;
+
+        return updated;
+      });
+    }, 2500 + gridIndex * 450)
+  );
+
+  return () => timers.forEach(clearInterval);
+}, [images]);
 
   return (
     <Box
@@ -159,35 +166,35 @@ export default function Home() {
 
         <Box sx={{ px: { xs: 1.5, sm: 2, md: 4 }, py: { xs: 2, md: 4 } }}>
           {gridImages.length > 0 && (
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: { xs: 1, md: 2 },
-                width: "100%",
-              }}
-            >
-              {gridImages.map((src, index) => (
-                <Box
-                  key={`${src}-${index}`}
-                  component="img"
-                  src={src}
-                  alt={`Imagem ${index + 1}`}
-                  sx={{
-                    width: "100%",
-                    height: { xs: "105px", sm: "180px", md: "260px" },
-                    objectFit: "cover",
-                    backgroundColor: "#000",
-                    borderRadius: { xs: "10px", md: "14px" },
-                    border: "2px solid #FFD700",
-                    display: "block",
-                    transition: "opacity 0.6s ease",
-                    boxShadow: "0 0 14px rgba(255, 215, 0, 0.25)",
-                  }}
-                />
-              ))}
-            </Box>
-          )}
+  <Box
+    sx={{
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: { xs: 0.8, md: 2 },
+      width: "100%",
+    }}
+  >
+    {gridImages.map((src, index) => (
+      <Box
+        key={`${src}-${index}`}
+        component="img"
+        src={src}
+        alt={`Imagem ${index + 1}`}
+        sx={{
+          width: "100%",
+          height: { xs: "82px", sm: "150px", md: "260px" },
+          objectFit: "cover",
+          backgroundColor: "#000",
+          borderRadius: { xs: "8px", md: "14px" },
+          border: { xs: "1px solid #FFD700", md: "2px solid #FFD700" },
+          display: "block",
+          transition: "opacity 0.6s ease",
+          boxShadow: "0 0 14px rgba(255, 215, 0, 0.25)",
+        }}
+      />
+    ))}
+  </Box>
+)}
         </Box>
       </Box>
 
