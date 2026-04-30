@@ -3,12 +3,6 @@ import { AppBar, Toolbar, Button, Typography, Box } from "@mui/material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import InstagramIcon from "@mui/icons-material/Instagram";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import { Grid } from "swiper/modules";
-
-import "swiper/css";
-
 export default function Home() {
   const [images, setImages] = useState([]);
 
@@ -45,13 +39,7 @@ export default function Home() {
             minHeight: { xs: "62px", md: "76px" },
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: { xs: 1, md: 1.5 },
-            }}
-          >
+          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 1.5 } }}>
             <Box
               component="img"
               src="/img/logo.png"
@@ -108,11 +96,6 @@ export default function Home() {
               minWidth: "auto",
               whiteSpace: "nowrap",
               boxShadow: "0 0 18px rgba(255, 215, 0, 0.35)",
-              "&:hover": {
-                background: "#000",
-                color: "#FFD700",
-                border: "1px solid #FFD700",
-              },
             }}
           >
             Área do Doutor
@@ -120,14 +103,7 @@ export default function Home() {
         </Toolbar>
       </AppBar>
 
-      <Box
-        component="main"
-        sx={{
-          flex: "1 0 auto",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <Box component="main" sx={{ flex: "1 0 auto" }}>
         <Box
           component="img"
           src="/img/base.png"
@@ -140,63 +116,46 @@ export default function Home() {
           }}
         />
 
-        <Box
-          sx={{
-            px: { xs: 1.5, sm: 2, md: 4 },
-            py: { xs: 2, md: 4 },
-          }}
-        >
-{images.length > 0 && (
-  <Swiper
-    modules={[Autoplay, Grid]}
-    autoplay={{ delay: 2500, disableOnInteraction: false }}
-    loop={images.length > 4}
-    spaceBetween={12}
-    grid={{
-      rows: 2,
-      fill: "row",
-    }}
-    breakpoints={{
-      0: {
-        slidesPerView: 2, // 📱 celular = 2 colunas
-      },
-      768: {
-        slidesPerView: 2,
-        grid: { rows: 1 }, // tablet vira linha normal
-      },
-      1024: {
-        slidesPerView: 3,
-        grid: { rows: 1 }, // desktop normal
-      },
-    }}
-  >
-    {images.map((src, index) => (
-      <SwiperSlide key={index}>
-        <img
-          src={src}
-          alt={`Imagem ${index + 1}`}
-          style={{
-            width: "100%",
-            height: "120px", // 👈 menor pra caber 2 linhas
-            objectFit: "cover",
-            borderRadius: "12px",
-            border: "2px solid rgba(255,215,0,0.7)",
-            boxShadow: "0 0 10px rgba(255,215,0,0.3)"
-          }}
-        />
-      </SwiperSlide>
-    ))}
-  </Swiper>
-)}
-        
+        <Box sx={{ px: { xs: 1.5, sm: 2, md: 4 }, py: { xs: 2, md: 4 } }}>
+          {images.length > 0 && (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(2, 1fr)",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                },
+                gap: { xs: 1, md: 2 },
+                width: "100%",
+              }}
+            >
+              {images.map((src, index) => (
+                <Box
+                  key={index}
+                  component="img"
+                  src={src}
+                  alt={`Imagem ${index + 1}`}
+                  sx={{
+                    width: "100%",
+                    height: { xs: "170px", sm: "220px", md: "280px" },
+                    objectFit: "contain",
+                    backgroundColor: "#000",
+                    borderRadius: "14px",
+                    border: "2px solid #FFD700",
+                    display: "block",
+                  }}
+                />
+              ))}
+            </Box>
+          )}
         </Box>
       </Box>
 
       <Box
         component="footer"
         sx={{
-          background:
-            "linear-gradient(180deg, #050505 0%, #111 60%, #050505 100%)",
+          background: "linear-gradient(180deg, #050505 0%, #111 60%, #050505 100%)",
           borderTop: "1px solid rgba(255, 215, 0, 0.35)",
           px: 2,
           py: { xs: 2.5, md: 4 },
@@ -218,24 +177,11 @@ export default function Home() {
           Instituto Fiorotto
         </Typography>
 
-        <Typography
-          sx={{
-            color: "#fff",
-            mb: 2,
-            fontSize: { xs: "0.82rem", md: "0.95rem" },
-          }}
-        >
+        <Typography sx={{ color: "#fff", mb: 2, fontSize: { xs: "0.82rem", md: "0.95rem" } }}>
           Excelência em estética odontológica • São Paulo - SP
         </Typography>
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            gap: 1.5,
-          }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 1.5 }}>
           <Box
             component="a"
             href="https://wa.me/55959645994"
@@ -258,6 +204,7 @@ export default function Home() {
             <WhatsAppIcon fontSize="small" />
             WhatsApp
           </Box>
+
           <Box
             component="a"
             href="https://wa.me/5511987880320"
