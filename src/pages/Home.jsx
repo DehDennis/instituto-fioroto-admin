@@ -5,6 +5,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+import { Grid } from "swiper/modules";
 
 import "swiper/css";
 
@@ -145,37 +146,49 @@ export default function Home() {
             py: { xs: 2, md: 4 },
           }}
         >
-          {images.length > 0 && (
-            <Swiper
-              modules={[Autoplay]}
-              autoplay={{ delay: 2500, disableOnInteraction: false }}
-              loop={images.length > 3}
-              slidesPerView={1}
-              spaceBetween={16}
-              breakpoints={{
-                768: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
-              }}
-              style={{ width: "100%" }}
-            >
-              {images.map((src, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    src={src}
-                    alt={`Imagem ${index + 1}`}
-                    style={{
-                      width: "100%",
-                      height: "clamp(150px, 28vh, 280px)",
-                      objectFit: "cover",
-                      borderRadius: "14px",
-                      border: "2px solid #FFD700",
-                      display: "block",
-                    }}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          )}
+{images.length > 0 && (
+  <Swiper
+    modules={[Autoplay, Grid]}
+    autoplay={{ delay: 2500, disableOnInteraction: false }}
+    loop={images.length > 4}
+    spaceBetween={12}
+    grid={{
+      rows: 2,
+      fill: "row",
+    }}
+    breakpoints={{
+      0: {
+        slidesPerView: 2, // 📱 celular = 2 colunas
+      },
+      768: {
+        slidesPerView: 2,
+        grid: { rows: 1 }, // tablet vira linha normal
+      },
+      1024: {
+        slidesPerView: 3,
+        grid: { rows: 1 }, // desktop normal
+      },
+    }}
+  >
+    {images.map((src, index) => (
+      <SwiperSlide key={index}>
+        <img
+          src={src}
+          alt={`Imagem ${index + 1}`}
+          style={{
+            width: "100%",
+            height: "120px", // 👈 menor pra caber 2 linhas
+            objectFit: "cover",
+            borderRadius: "12px",
+            border: "2px solid rgba(255,215,0,0.7)",
+            boxShadow: "0 0 10px rgba(255,215,0,0.3)"
+          }}
+        />
+      </SwiperSlide>
+    ))}
+  </Swiper>
+)}
+        
         </Box>
       </Box>
 
