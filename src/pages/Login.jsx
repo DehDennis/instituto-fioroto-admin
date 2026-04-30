@@ -6,24 +6,28 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = async () => {
-    try {
-      const res = await fetch("/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await res.json();
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        window.location.href = "/upload"; // redireciona para upload
-      } else {
-        setError("Credenciais inválidas");
-      }
-    } catch {
-      setError("Erro no servidor");
+const handleLogin = async () => {
+  try {
+    const API_URL = import.meta.env.DEV ? "http://localhost:4000" : "";
+
+    const res = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await res.json();
+
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      window.location.href = "/upload";
+    } else {
+      setError("Credenciais inválidas");
     }
-  };
+  } catch {
+    setError("Erro no servidor");
+  }
+};
 
   return (
     <Box sx={{ bgcolor: "#000", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>

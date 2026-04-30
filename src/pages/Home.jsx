@@ -5,6 +5,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 
 export default function Home() {
   const [images, setImages] = useState([]);
+  const [gridImages, setGridImages] = useState([]);
 
   useEffect(() => {
     fetch("/images")
@@ -12,6 +13,40 @@ export default function Home() {
       .then((data) => setImages(data))
       .catch((err) => console.error("Erro ao carregar imagens:", err));
   }, []);
+
+  useEffect(() => {
+    if (images.length === 0) return;
+
+    const initialGrid = Array.from(
+      { length: 9 },
+      (_, index) => images[index % images.length]
+    );
+
+    setGridImages(initialGrid);
+  }, [images]);
+
+  useEffect(() => {
+    if (images.length === 0) return;
+
+    const timers = Array.from({ length: 9 }, (_, gridIndex) =>
+      setInterval(() => {
+        setGridImages((prev) => {
+          if (prev.length === 0) return prev;
+
+          const updated = [...prev];
+          const currentIndex = images.indexOf(updated[gridIndex]);
+          const safeIndex = currentIndex >= 0 ? currentIndex : 0;
+          const nextIndex = (safeIndex + gridIndex + 1) % images.length;
+
+          updated[gridIndex] = images[nextIndex];
+
+          return updated;
+        });
+      }, 2500 + gridIndex * 450)
+    );
+
+    return () => timers.forEach(clearInterval);
+  }, [images]);
 
   return (
     <Box
@@ -39,7 +74,13 @@ export default function Home() {
             minHeight: { xs: "62px", md: "76px" },
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 1.5 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: { xs: 1, md: 1.5 },
+            }}
+          >
             <Box
               component="img"
               src="/img/logo.png"
@@ -117,33 +158,31 @@ export default function Home() {
         />
 
         <Box sx={{ px: { xs: 1.5, sm: 2, md: 4 }, py: { xs: 2, md: 4 } }}>
-          {images.length > 0 && (
+          {gridImages.length > 0 && (
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: {
-                  xs: "repeat(2, 1fr)",
-                  sm: "repeat(2, 1fr)",
-                  md: "repeat(3, 1fr)",
-                },
+                gridTemplateColumns: "repeat(3, 1fr)",
                 gap: { xs: 1, md: 2 },
                 width: "100%",
               }}
             >
-              {images.map((src, index) => (
+              {gridImages.map((src, index) => (
                 <Box
-                  key={index}
+                  key={`${src}-${index}`}
                   component="img"
                   src={src}
                   alt={`Imagem ${index + 1}`}
                   sx={{
                     width: "100%",
-                    height: { xs: "170px", sm: "220px", md: "280px" },
-                    objectFit: "contain",
+                    height: { xs: "105px", sm: "180px", md: "260px" },
+                    objectFit: "cover",
                     backgroundColor: "#000",
-                    borderRadius: "14px",
+                    borderRadius: { xs: "10px", md: "14px" },
                     border: "2px solid #FFD700",
                     display: "block",
+                    transition: "opacity 0.6s ease",
+                    boxShadow: "0 0 14px rgba(255, 215, 0, 0.25)",
                   }}
                 />
               ))}
@@ -155,7 +194,8 @@ export default function Home() {
       <Box
         component="footer"
         sx={{
-          background: "linear-gradient(180deg, #050505 0%, #111 60%, #050505 100%)",
+          background:
+            "linear-gradient(180deg, #050505 0%, #111 60%, #050505 100%)",
           borderTop: "1px solid rgba(255, 215, 0, 0.35)",
           px: 2,
           py: { xs: 2.5, md: 4 },
@@ -177,11 +217,24 @@ export default function Home() {
           Instituto Fiorotto
         </Typography>
 
-        <Typography sx={{ color: "#fff", mb: 2, fontSize: { xs: "0.82rem", md: "0.95rem" } }}>
+        <Typography
+          sx={{
+            color: "#fff",
+            mb: 2,
+            fontSize: { xs: "0.82rem", md: "0.95rem" },
+          }}
+        >
           Excelência em estética odontológica • São Paulo - SP
         </Typography>
 
-        <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 1.5 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: 1.5,
+          }}
+        >
           <Box
             component="a"
             href="https://wa.me/55959645994"
