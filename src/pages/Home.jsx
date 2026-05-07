@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import Layout from "./Layout";
 
-const GRID_SIZE = 12;
+const GRID_SIZE = 3;
 
 const GROUPS = [
   {
@@ -38,33 +38,33 @@ function ImageGridSection({ title, subtitle, images }) {
     setGridImages(createInitialGrid(images));
   }, [images]);
 
-  useEffect(() => {
-    if (!images || images.length <= GRID_SIZE) return;
+ useEffect(() => {
+  if (!images || images.length <= 1) return;
 
-    const timers = Array.from({ length: GRID_SIZE }, (_, gridIndex) =>
-      setInterval(() => {
-        setGridImages((prev) => {
-          if (prev.length === 0) return prev;
+  const timers = Array.from({ length: GRID_SIZE }, (_, gridIndex) =>
+    setInterval(() => {
+      setGridImages((prev) => {
+        if (prev.length === 0) return prev;
 
-          const updated = [...prev];
-          const usedImages = new Set(updated);
-          const availableImages = images.filter((img) => !usedImages.has(img));
+        const updated = [...prev];
+        const usedImages = new Set(updated);
+        const availableImages = images.filter((img) => !usedImages.has(img));
 
-          if (availableImages.length > 0) {
-            updated[gridIndex] =
-              availableImages[
-                (gridIndex + Math.floor(Date.now() / 1000)) %
-                  availableImages.length
-              ];
-          }
+        if (availableImages.length > 0) {
+          updated[gridIndex] =
+            availableImages[
+              (gridIndex + Math.floor(Date.now() / 1000)) %
+                availableImages.length
+            ];
+        }
 
-          return updated;
-        });
-      }, 2000 + gridIndex * 250)
-    );
+        return updated;
+      });
+    }, 2000 + gridIndex * 250)
+  );
 
-    return () => timers.forEach(clearInterval);
-  }, [images]);
+  return () => timers.forEach(clearInterval);
+}, [images]);
 
   if (!gridImages.length) return null;
 
