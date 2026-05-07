@@ -10,12 +10,25 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const SECRET = process.env.JWT_SECRET || "chave-super-secreta";
 
-const UPLOAD_DIR = path.resolve("uploads");
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.resolve("uploads");
 const DIST_DIR = path.resolve("dist");
+
+const CATEGORIES = {
+  "resina-normal": "resinasNormais",
+  "resina-estratificada": "resinasEstratificadas",
+  porcelana: "porcelanas",
+};
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
+
+Object.keys(CATEGORIES).forEach((category) => {
+  const dir = path.join(UPLOAD_DIR, category);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
 app.use(cors());
 app.use(express.json());
@@ -60,42 +73,77 @@ function authMiddleware(req, res, next) {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, UPLOAD_DIR);
+    const category = req.body.category;
+
+    if (!CATEGORIES[category]) {
+      return cb(new Error("Categoria inválida"));
+    }
+
+    const categoryDir = path.join(UPLOAD_DIR, category);
+
+    if (!fs.existsSync(categoryDir)) {
+      fs.mkdirSync(categoryDir, { recursive: true });
+    }
+
+    cb(null, categoryDir);
   },
+
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+    const safeName = file.originalname.replace(/\s+/g, "-");
+    cb(null, `${Date.now()}-${safeName}`);
   },
 });
 
 const upload = multer({
   storage,
-  limits: { files: 10 },
+  limits: {
+    files: 30,
+    fileSize: 8 * 1024 * 1024,
+  },
 });
 
-app.post("/upload", authMiddleware, upload.array("images", 10), (req, res) => {
-  const filePaths = req.files.map((file) => `/uploads/${file.filename}`);
+app.post("/upload", authMiddleware, upload.array("images", 30), (req, res) => {
+  const category = req.body.category;
+
+  const filePaths = req.files.map(
+    (file) => `/uploads/${category}/${file.filename}`
+  );
 
   return res.json({
     message: "Upload realizado com sucesso",
+    category,
     files: filePaths,
   });
 });
 
 app.get("/images", (req, res) => {
-  fs.readdir(UPLOAD_DIR, (err, files) => {
-    if (err) {
-      return res.status(500).json({ error: "Erro ao listar imagens" });
+  const result = {
+    resinasNormais: [],
+    resinasEstratificadas: [],
+    porcelanas: [],
+  };
+
+  Object.entries(CATEGORIES).forEach(([folder, key]) => {
+    const dir = path.join(UPLOAD_DIR, folder);
+
+    if (fs.existsSync(dir)) {
+      result[key] = fs
+        .readdirSync(dir)
+        .map((file) => `/uploads/${folder}/${file}`);
     }
-
-    const urls = files.map((file) => `/uploads/${file}`);
-
-    return res.json(urls);
   });
+
+  return res.json(result);
 });
 
-app.delete("/images/:filename", authMiddleware, (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(UPLOAD_DIR, filename);
+app.delete("/images/:category/:filename", authMiddleware, (req, res) => {
+  const { category, filename } = req.params;
+
+  if (!CATEGORIES[category]) {
+    return res.status(400).json({ error: "Categoria inválida" });
+  }
+
+  const filePath = path.join(UPLOAD_DIR, category, filename);
 
   if (!fs.existsSync(filePath)) {
     return res.status(404).json({ error: "Arquivo não encontrado" });
